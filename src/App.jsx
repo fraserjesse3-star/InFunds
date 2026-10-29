@@ -3,7 +3,7 @@ import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, Bookmark, CalendarDays,
   Check, ChevronDown, CircleDollarSign, Clock3, ExternalLink, Filter,
   FolderOpen, HeartHandshake, LayoutDashboard, Menu, Plus, Search,
-  Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Target, Users, X
+  Settings2, ShieldCheck, SlidersHorizontal, Sparkles, Target, Users, X, WandSparkles
 } from 'lucide-react'
 
 const initialGrants = [
@@ -81,6 +81,11 @@ export default function App() {
   const [mobileMenu, setMobileMenu] = useState(false)
   const [toast, setToast] = useState('')
   const [form, setForm] = useState({ name: '', funder: '', amount: '', deadline: '', region: 'Waikato', category: 'Community projects', source: '', description: '' })
+  const [matchProfile, setMatchProfile] = useState({
+    region: 'Waikato', organisationType: 'Incorporated society or charity',
+    projectPurpose: 'Participation & inclusion', participants: 'Children and young people',
+    budget: '5000', notes: ''
+  })
 
   const persist = (next) => {
     setGrants(next)
@@ -122,9 +127,42 @@ export default function App() {
     notify('Grant added to your tracker')
   }
 
+  const matchResults = useMemo(() => {
+    const purposeMap = {
+      'Participation & inclusion': ['participation', 'inclusion', 'community', 'sport', 'active', 'welcoming', 'children', 'young'],
+      'Equipment': ['equipment', 'facility', 'development', 'sport', 'community'],
+      'Facilities & development': ['facility', 'development', 'community', 'club'],
+      'Coaching & programmes': ['programme', 'participation', 'sport', 'children', 'young', 'community'],
+      'Travel & competition': ['tournament', 'travel', 'sports', 'club', 'competition'],
+      'Community projects': ['community', 'inclusion', 'wellbeing', 'sport', 'welcoming']
+    }
+    const purposeTerms = purposeMap[matchProfile.projectPurpose] || []
+    const budgetNumber = Number(matchProfile.budget) || 0
+    return grants.map(g => {
+      let score = 0
+      const text = `${g.name} ${g.funder} ${g.category} ${g.description} ${g.eligibility}`.toLowerCase()
+      const region = (matchProfile.region || '').toLowerCase()
+      if (region && (g.region.toLowerCase().includes(region) || region.includes(g.region.toLowerCase()) || g.region.toLowerCase() === 'waikato')) score += 25
+      if (g.category === matchProfile.projectPurpose) score += 30
+      else if (purposeTerms.some(term => text.includes(term))) score += 14
+      if (matchProfile.participants === 'Children and young people' && /children|young people|tamariki|rangatahi|youth|school/.test(text)) score += 20
+      if (matchProfile.participants === 'Newcomers and inclusion' && /welcoming|inclusion|newcomer|connection|access/.test(text)) score += 20
+      if (matchProfile.participants === 'Whole community' && /community|sport|club|wellbeing/.test(text)) score += 15
+      if (matchProfile.organisationType === 'Incorporated society or charity' && /not-for-profit|charit|organisation|community/.test(text)) score += 10
+      if (matchProfile.organisationType === 'School' && /school|children|young people|tamariki|rangatahi/.test(text)) score += 10
+      if (matchProfile.organisationType === 'Informal community group' && /community|participation|inclusion/.test(text)) score += 5
+      if (budgetNumber > 0 && /up to \\$?5,000|\\$5,000/.test(g.amount) && budgetNumber <= 5000) score += 5
+      if (g.status === 'Open') score += 10
+      if (g.status === 'Closed') score -= 25
+      if (/check with funder|unconfirmed|tbc/i.test(`${g.status} ${g.deadline} ${g.amount}`)) score -= 5
+      return { ...g, matchScore: Math.max(0, Math.min(100, score)) }
+    }).sort((a,b) => b.matchScore - a.matchScore)
+  }, [grants, matchProfile])
+
   const nav = [
     { name: 'Overview', icon: LayoutDashboard },
     { name: 'All grants', icon: Search },
+    { name: 'Grant matching', icon: WandSparkles },
     { name: 'Saved grants', icon: Bookmark },
     { name: 'Applications', icon: FolderOpen }
   ]
@@ -165,8 +203,53 @@ export default function App() {
 
         <section className="feature-banner"><div className="banner-symbol"><HeartHandshake size={25}/></div><div className="banner-copy"><span className="banner-kicker">A BETTER WAY TO FIND FUNDING</span><h2>Spend less time searching. More time making sport happen.</h2><p>Compare opportunities, check the fine print and track the next step, all in one workspace.</p></div><div className="banner-art"><div className="art-circle circle-one"/><div className="art-circle circle-two"/><div className="art-card"><div className="art-card-top"><span>Funding fit</span><Sparkles size={14}/></div><div className="art-bar"><i/></div><div className="art-line short"/><div className="art-line"/></div><div className="art-check"><Check size={17}/></div></div></section>
 
-        <div className="section-heading"><div><h2>{activePage === 'Overview' ? 'Funding opportunities' : activePage === 'Applications' ? 'Your tracked opportunities' : activePage === 'Saved grants' ? 'Your saved grants' : 'All funding opportunities'}</h2><p>Browse current listings and check the source before applying.</p></div><button className="text-btn" onClick={() => { setActivePage('All grants'); setFilter('All grants') }}>View all grants <ArrowUpRight size={15}/></button></div>
-        <div className="toolbar"><div className="searchbox"><Search size={17}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search grants, funders or keywords..." aria-label="Search grants"/></div><div className="filter-select"><SlidersHorizontal size={16}/><select value={filter} onChange={e => setFilter(e.target.value)} aria-label="Filter grants"><option>All grants</option><option>Open now</option><option>Saved</option><option>Tracking</option></select><ChevronDown size={14}/></div><div className="filter-select category-select"><Filter size={16}/><select value={category} onChange={e => setCategory(e.target.value)} aria-label="Filter by category">{categories.map(c => <option key={c}>{c}</option>)}</select><ChevronDown size={14}/></div></div>
+        {activePage === 'Grant matching' && <section className="matching-layout">
+          <div className="match-form-card">
+            <div className="match-card-heading"><div className="match-heading-icon"><WandSparkles size={19}/></div><div><h2>Tell us about your project</h2><p>We'll compare your answers with the demo grant listings.</p></div></div>
+            <div className="match-form-grid">
+              <label>Where is your organisation based?
+                <select value={matchProfile.region} onChange={e => setMatchProfile({...matchProfile, region:e.target.value})}>
+                  <option>Waikato</option><option>Hamilton</option><option>Waipā</option><option>South Waikato</option><option>New Zealand</option>
+                </select>
+              </label>
+              <label>Organisation type
+                <select value={matchProfile.organisationType} onChange={e => setMatchProfile({...matchProfile, organisationType:e.target.value})}>
+                  <option>Incorporated society or charity</option><option>School</option><option>Informal community group</option><option>Sports club</option><option>Business</option>
+                </select>
+              </label>
+              <label>What do you want funding for?
+                <select value={matchProfile.projectPurpose} onChange={e => setMatchProfile({...matchProfile, projectPurpose:e.target.value})}>
+                  <option>Participation & inclusion</option><option>Equipment</option><option>Facilities & development</option><option>Coaching & programmes</option><option>Travel & competition</option><option>Community projects</option>
+                </select>
+              </label>
+              <label>Who will benefit?
+                <select value={matchProfile.participants} onChange={e => setMatchProfile({...matchProfile, participants:e.target.value})}>
+                  <option>Children and young people</option><option>Newcomers and inclusion</option><option>Whole community</option><option>Competitive athletes</option><option>Older adults</option>
+                </select>
+              </label>
+              <label>Approximate project budget (NZD)
+                <input type="number" min="0" value={matchProfile.budget} onChange={e => setMatchProfile({...matchProfile,budget:e.target.value})} placeholder="e.g. 5000"/>
+              </label>
+              <label>Extra project details (optional)
+                <input value={matchProfile.notes} onChange={e => setMatchProfile({...matchProfile,notes:e.target.value})} placeholder="e.g. low-cost after-school sport"/>
+              </label>
+            </div>
+            <div className="match-disclaimer"><ShieldCheck size={15}/><span>These are indicative matches based on listing text, not a confirmed eligibility decision. Check each funder's rules before applying.</span></div>
+          </div>
+          <div className="match-results">
+            <div className="match-results-heading"><div><div className="eyebrow"><Sparkles size={13}/> YOUR SHORTLIST</div><h2>Potential funding matches</h2><p>Ranked against your project profile.</p></div><span className="match-count">{matchResults.length} grants</span></div>
+            {matchResults.map((g, idx) => <article className="match-result-card" key={g.id}>
+              <div className="match-result-top"><div className="funder-logo">{g.funder.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}</div><div className="match-result-title"><strong>{g.name}</strong><span>{g.funder} · {g.category}</span></div><div className={`match-score ${g.matchScore >= 65 ? 'score-high' : g.matchScore >= 40 ? 'score-mid' : 'score-low'}`}><strong>{g.matchScore}%</strong><span>indicative fit</span></div></div>
+              <div className="match-meter"><span style={{width:`${g.matchScore}%`}}/></div>
+              <div className="match-result-meta"><span className={`status-badge ${statusClass(g.status)}`}><span/>{g.status}</span><span><CalendarDays size={13}/>{g.deadline}</span></div>
+              <p>{g.description}</p>
+              <div className="match-result-actions"><button className="secondary-btn" onClick={() => setSelected(g)}>Review eligibility</button><button className={`save-btn ${g.saved ? 'saved' : ''}`} onClick={() => toggleSaved(g.id)}><Bookmark size={16} fill={g.saved ? 'currentColor' : 'none'}/>{g.saved ? 'Saved' : 'Save match'}</button></div>
+            </article>)}
+          </div>
+        </section>}
+
+        {activePage !== 'Grant matching' && <div className="section-heading"><div><h2>{activePage === 'Overview' ? 'Funding opportunities' : activePage === 'Applications' ? 'Your tracked opportunities' : activePage === 'Saved grants' ? 'Your saved grants' : 'All funding opportunities'}</h2><p>Browse current listings and check the source before applying.</p></div><button className="text-btn" onClick={() => { setActivePage('All grants'); setFilter('All grants') }}>View all grants <ArrowUpRight size={15}/></button></div>
+        {activePage !== 'Grant matching' && <><div className="toolbar"><div className="searchbox"><Search size={17}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search grants, funders or keywords..." aria-label="Search grants"/></div><div className="filter-select"><SlidersHorizontal size={16}/><select value={filter} onChange={e => setFilter(e.target.value)} aria-label="Filter grants"><option>All grants</option><option>Open now</option><option>Saved</option><option>Tracking</option></select><ChevronDown size={14}/></div><div className="filter-select category-select"><Filter size={16}/><select value={category} onChange={e => setCategory(e.target.value)} aria-label="Filter by category">{categories.map(c => <option key={c}>{c}</option>)}</select><ChevronDown size={14}/></div></div>
 
         <div className="grant-list">
           <div className="list-head"><span>FUNDING OPPORTUNITY</span><span>STATUS</span><span>DEADLINE</span><span>FUNDING</span><span/></div>
@@ -179,7 +262,7 @@ export default function App() {
             <div className="row-actions"><button className={`save-btn ${g.saved ? 'saved' : ''}`} title={g.saved ? 'Remove from saved' : 'Save grant'} onClick={() => toggleSaved(g.id)}><Bookmark size={17} fill={g.saved ? 'currentColor' : 'none'}/></button><button className="more-btn" title="View details" onClick={() => setSelected(g)}><ArrowUpRight size={17}/></button></div>
           </div>)}
         </div>
-        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Listings in this demo are a starting point, not a guarantee of current availability or funding.</span></div></div>
+        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Listings in this demo are a starting point, not a guarantee of current availability or funding.</span></div></div></>}
         <footer><span>© 2026 InFunds · Demo workspace</span><span>Built to help community sport thrive <HeartHandshake size={14}/></span></footer>
       </div>
     </main>

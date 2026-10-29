@@ -6,6 +6,7 @@ A responsive React + Vite demo for tracking community sport funding opportunitie
 - Search and filter the grant list
 - Overview dashboard, saved grants, and tracked applications
 - Add a grant form
+- Grant matching tool that ranks demo listings against location, organisation type, project purpose, participants and budget (indicative only)
 - Grant detail panel with eligibility notes and official source links
 - Browser `localStorage` persistence
 - Responsive desktop and mobile layouts
