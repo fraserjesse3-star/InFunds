@@ -9,63 +9,71 @@ import {
 const initialGrants = [
   {
     id: 'tu-manawa', name: 'Tū Manawa Active Aotearoa', funder: 'Sport Waikato',
-    category: 'Participation & inclusion', amount: 'Needs-based', status: 'Open',
-    deadline: 'Rolling applications', region: 'Waikato', fit: 'High',
-    description: 'Supports play, active recreation and sport opportunities for tamariki and rangatahi aged 5–18, particularly where access is limited.',
-    eligibility: 'Community Activation Fund is aimed at eligible not-for-profit organisations. Confirm project fit and current requirements with Sport Waikato.',
-    source: 'https://www.sportwaikato.org.nz/about/tu-manawa-active-aotearoa-fund/funding',
+    category: 'Participation & inclusion', amount: 'Needs-based; confirm project budget with Sport Waikato', status: 'Open',
+    deadline: 'Rolling applications: 1 Jul–30 Jun', region: 'Waikato', fit: 'Potential fit',
+    description: 'Supports community-led play, active recreation and sport projects for tamariki and rangatahi aged 5–18, with priority for groups facing barriers to participation.',
+    eligibility: 'Sport Waikato starts with a conversation and works with applicants on request. It prioritises eligible organisations including clubs, schools and community groups with legal status. Funding may support programme delivery, delivery staff, equipment, venue hire and transport that removes barriers. Ongoing admin costs, capital items and vehicles are not funded.',
+    source: 'https://www.sportwaikato.org.nz/about/tu-manawa-active-aotearoa-fund',
     verified: '29 Oct 2026', saved: true, applicationStatus: 'Considering'
   },
   {
-    id: 'development-contribution', name: 'Development Contribution Fund', funder: 'Hamilton City Council',
-    category: 'Facilities & development', amount: 'Up to $10,000 considered', status: 'Open',
-    deadline: '30 Jun 2027', region: 'Hamilton', fit: 'Medium',
-    description: 'May help eligible community organisations with development contribution charges linked to small-scale community developments.',
-    eligibility: 'Narrowly focused on eligible development contribution charges, not general equipment, coaching or operating costs. Check all criteria before applying.',
+    id: 'rural-travel', name: 'Rural Travel Fund', funder: 'Sport New Zealand / local council',
+    category: 'Travel & competition', amount: 'Ask your participating local council', status: 'Check with local council',
+    deadline: 'Council-managed rounds; confirm locally', region: 'Eligible rural areas', fit: 'Eligibility-specific',
+    description: 'Helps subsidise travel for eligible rural junior teams aged 5–18 to take part in regular local sporting competitions outside school time.',
+    eligibility: 'Applications are made through participating territorial authorities, not directly to Sport NZ. Teams must be based in an eligible authority area and compete in regular local competition. It does not cover individuals, one-off national events, or school-time inter-school competitions. In the Waikato region, check the official list of participating councils before relying on eligibility.',
+    source: 'https://sportnz.org.nz/resources/rural-travel-fund/',
+    verified: '29 Oct 2026', saved: false, applicationStatus: 'Monitoring'
+  },
+  {
+    id: 'hamilton-development-contribution', name: 'Development Contribution Fund', funder: 'Hamilton City Council',
+    category: 'Facilities & development', amount: 'Up to $10,000 considered; $20,000 fund pool', status: 'Open',
+    deadline: '30 Jun 2027', region: 'Hamilton', fit: 'Narrow project fit',
+    description: 'A specific fund to help eligible not-for-profit community organisations offset development contribution charges for small-scale community developments in Hamilton.',
+    eligibility: 'Only covers development contribution charges for qualifying small-scale developments, generally 30 m² or less. Applicants must be a legally constituted not-for-profit operating for at least 12 months and provide free or low-cost services benefiting Hamiltonians. It does not cover general equipment, coaching, or operating costs. Grants are not guaranteed.',
     source: 'https://hamilton.govt.nz/community-support-and-funding/community-funding/development-contribution-fund',
     verified: '29 Oct 2026', saved: false, applicationStatus: 'Not started'
   },
   {
-    id: 'welcoming-communities', name: 'Welcoming Communities Fund', funder: 'Hamilton City Council',
-    category: 'Inclusion & connection', amount: 'Up to $5,000 prioritised', status: 'Open',
-    deadline: '1 Jun 2027', region: 'Hamilton', fit: 'Medium',
-    description: 'Supports initiatives that help newcomers feel included, build connections and take part in community life.',
-    eligibility: 'A project must align with welcoming community outcomes. Routine business-as-usual costs are generally not a fit.',
+    id: 'hamilton-welcoming-communities', name: 'Welcoming Communities Fund', funder: 'Hamilton City Council',
+    category: 'Inclusion & connection', amount: 'Up to $5,000 per project; $75,000 fund pool', status: 'Open',
+    deadline: '1 Jun 2027 or until funds are allocated', region: 'Hamilton', fit: 'Project-specific',
+    description: 'Supports new projects and activities that help newcomers feel welcome, improve equitable access, and build connected and inclusive communities in Hamilton.',
+    eligibility: 'Priority is given to new projects aligned with Hamilton’s Welcoming Plan. Applicants generally need to be a legally constituted not-for-profit that has operated for at least 12 months. Existing business-as-usual programmes and retrospective costs are not funded. A sports club should contact Council to confirm the project fits the fund’s newcomer and inclusion outcomes.',
     source: 'https://hamilton.govt.nz/community-support-and-funding/community-funding/welcoming-communities-fund',
     verified: '29 Oct 2026', saved: false, applicationStatus: 'Not started'
   },
   {
-    id: 'trust-waikato', name: 'Community Response Fund', funder: 'Trust Waikato',
-    category: 'Community wellbeing', amount: 'Check current round', status: 'Round dates unconfirmed',
-    deadline: 'Next round TBC', region: 'Waikato', fit: 'High',
-    description: 'Trust Waikato supports eligible charitable and community organisations across the Waikato, including sport and recreation initiatives.',
-    eligibility: 'For-purpose groups need a charitable purpose and appropriate governance and financial documentation. The listed 2026 closing dates have passed; confirm the next round.',
-    source: 'https://trustwaikato.co.nz/grants-funding/closing-dates/',
+    id: 'trust-waikato', name: 'Community Response Grant', funder: 'Trust Waikato',
+    category: 'Community wellbeing', amount: 'Check current grant guidelines', status: 'Check current round',
+    deadline: 'Check official closing dates', region: 'Waikato region', fit: 'Potential fit',
+    description: 'Trust Waikato funds for-purpose groups and initiatives that strengthen community vibrancy, quality of life, resilience, participation and inclusion, including sport and recreation.',
+    eligibility: 'Groups generally need to operate mainly in the Waikato region or serve people in the region, have a bank account and annual financial statements, and have a charitable purpose. Trust Waikato runs three funding rounds each year; confirm the current dates and eligibility before preparing an application.',
+    source: 'https://trustwaikato.co.nz/grants-funding/',
+    verified: '29 Oct 2026', saved: false, applicationStatus: 'Monitoring'
+  },
+  {
+    id: 'grassroots-trust', name: 'Community Grants', funder: 'Grassroots Trust',
+    category: 'Equipment', amount: 'Amount depends on project and criteria', status: 'Open',
+    deadline: '31 Oct 2026 for the 30 Nov meeting', region: 'Venue-linked areas across NZ', fit: 'Check geographic eligibility',
+    description: 'Grassroots Trust considers eligible community, amateur sport, education and charitable initiatives in areas where its funding can be distributed.',
+    eligibility: 'Eligibility depends on the purpose of the grant and the area served, including the Trust’s venue-linked distribution rules. Applications should be submitted at least two months before funding is needed. The listed 31 October 2026 closing date is published for the November 2026 committee meeting and may change; verify it on the official page before applying.',
+    source: 'https://www.grassrootstrust.co.nz/apply-for-a-grant/',
     verified: '29 Oct 2026', saved: false, applicationStatus: 'Monitoring'
   },
   {
     id: 'waikato-tainui', name: 'Sports Grant – Organisation or Club', funder: 'Waikato-Tainui',
-    category: 'Competition & travel', amount: 'Confirm with funder', status: 'Check with funder',
-    deadline: 'No date confirmed', region: 'Waikato', fit: 'Eligibility-specific',
-    description: 'Potential support for eligible organisations or clubs attending tournaments.',
-    eligibility: 'Specific tribal registration and membership requirements apply, including at least 75% of members being registered Waikato-Tainui tribal members. Check current criteria.',
+    category: 'Travel & competition', amount: 'Confirm with funder', status: 'Check with funder',
+    deadline: 'No date confirmed', region: 'Eligibility-specific Waikato-Tainui community', fit: 'Eligibility-specific',
+    description: 'Potential support for eligible organisations or clubs seeking sports-related assistance.',
+    eligibility: 'The person applying on behalf of the club or organisation must be a registered Waikato-Tainui tribal member, and the organisation or club must have at least 75% registered Waikato-Tainui tribal members. Only one application per applicant is allowed per financial year. Confirm current requirements with Waikato-Tainui.',
     source: 'https://waikatotainui.com/grant/sports-organisation/',
     verified: '29 Oct 2026', saved: false, applicationStatus: 'Not started'
-  },
-  {
-    id: 'community-initiatives', name: 'Community Initiatives Grants', funder: 'Hamilton City Council',
-    category: 'Community projects', amount: '$180,000 total fund pool', status: 'Closed',
-    deadline: 'Next opening TBC', region: 'Hamilton', fit: 'Check next round',
-    description: 'A council funding stream for community initiatives. The current published page lists the round as closed.',
-    eligibility: 'Use the official page to check the next opening date and updated criteria. A published decision date is not necessarily an application deadline.',
-    source: 'https://hamilton.govt.nz/community-support-and-funding/community-funding/cig',
-    verified: '29 Oct 2026', saved: false, applicationStatus: 'Monitoring'
   }
 ]
-
 const statusClass = (status) => status === 'Open' ? 'open' : status === 'Closed' ? 'closed' : 'check'
 function loadGrants() {
-  try { const stored = localStorage.getItem('infunds-grants-v1'); return stored ? JSON.parse(stored) : initialGrants }
+  try { const stored = localStorage.getItem('infunds-grants-v2'); return stored ? JSON.parse(stored) : initialGrants }
   catch { return initialGrants }
 }
 function moneyLabel(value) { return value }
@@ -89,7 +97,7 @@ export default function App() {
 
   const persist = (next) => {
     setGrants(next)
-    try { localStorage.setItem('infunds-grants-v1', JSON.stringify(next)) } catch {}
+    try { localStorage.setItem('infunds-grants-v2', JSON.stringify(next)) } catch {}
   }
   const notify = (message) => { setToast(message); window.setTimeout(() => setToast(''), 2600) }
   const categories = ['All categories', ...new Set(grants.map(g => g.category))]
@@ -181,7 +189,7 @@ export default function App() {
       <button className="nav-item" onClick={() => { setActivePage('Overview'); setFilter('Tracking'); setMobileMenu(false) }}><Activity size={18}/><span>Grant round tracker</span></button>
       <div className="sidebar-bottom">
         <div className="help-card"><div className="help-icon"><Sparkles size={17}/></div><strong>Funding, made clearer.</strong><p>Find opportunities, check fit and keep your next steps in one place.</p><button onClick={() => notify('Demo version: grant data is stored in this browser.')}>How InFunds works <ArrowUpRight size={14}/></button></div>
-        <div className="demo-note"><ShieldCheck size={15}/><span>Demo workspace · Local data only</span></div>
+        <div className="demo-note"><ShieldCheck size={15}/><span>Pilot workspace · Data saved in this browser</span></div>
       </div>
     </aside>
 
@@ -189,23 +197,23 @@ export default function App() {
       <header className="topbar">
         <button className="icon-btn mobile-menu-btn" onClick={() => setMobileMenu(true)}><Menu size={20}/></button>
         <div className="breadcrumb">Workspace <span>/</span> <strong>{activePage}</strong></div>
-        <div className="top-actions"><span className="demo-pill"><span/> Demo mode</span><button className="icon-btn" title="Notifications" onClick={() => notify('You’re all caught up')}><Bell size={18}/></button><div className="user-avatar">SC</div></div>
+        <div className="top-actions"><span className="demo-pill"><span/> Pilot mode</span><button className="icon-btn" title="Notifications" onClick={() => notify('You’re all caught up')}><Bell size={18}/></button><div className="user-avatar">SC</div></div>
       </header>
       <div className="content">
         <div className="welcome-row"><div><div className="eyebrow"><Sparkles size={14}/> YOUR FUNDING WORKSPACE</div><h1>{activePage === 'Overview' ? 'Find funding that fits.' : activePage}</h1><p className="subheading">{activePage === 'Overview' ? 'A clearer view of grants for your club, your community and your next big idea.' : activePage === 'Saved grants' ? 'Your shortlist of funding opportunities to come back to.' : activePage === 'Applications' ? 'Keep an eye on opportunities you are considering or preparing.' : 'Search opportunities, check eligibility and keep grant rounds on your radar.'}</p></div><button className="primary-btn" onClick={() => setShowAdd(true)}><Plus size={17}/> Add a grant</button></div>
 
         {activePage === 'Overview' && <div className="stats-grid">
-          <div className="stat-card"><div className="stat-top"><span>Open opportunities</span><span className="stat-icon mint"><CircleDollarSign size={18}/></span></div><div className="stat-number">{openCount}</div><div className="stat-foot"><span className="status-dot green"/>Published as open in this demo</div></div>
+          <div className="stat-card"><div className="stat-top"><span>Open opportunities</span><span className="stat-icon mint"><CircleDollarSign size={18}/></span></div><div className="stat-number">{openCount}</div><div className="stat-foot"><span className="status-dot green"/>Listed as open on the source page when checked</div></div>
           <div className="stat-card"><div className="stat-top"><span>Saved grants</span><span className="stat-icon lilac"><Bookmark size={18}/></span></div><div className="stat-number">{savedCount}</div><div className="stat-foot">Your funding shortlist</div></div>
           <div className="stat-card"><div className="stat-top"><span>Being tracked</span><span className="stat-icon peach"><Target size={18}/></span></div><div className="stat-number">{trackedCount}</div><div className="stat-foot">Considering or monitoring</div></div>
-          <div className="stat-card"><div className="stat-top"><span>Regions covered</span><span className="stat-icon blue"><Users size={18}/></span></div><div className="stat-number">2</div><div className="stat-foot">Hamilton and wider Waikato</div></div>
+          <div className="stat-card"><div className="stat-top"><span>Regions covered</span><span className="stat-icon blue"><Users size={18}/></span></div><div className="stat-number">{new Set(grants.map(g => g.region)).size}</div><div className="stat-foot">Funding areas in the current list</div></div>
         </div>}
 
         <section className="feature-banner"><div className="banner-symbol"><HeartHandshake size={25}/></div><div className="banner-copy"><span className="banner-kicker">A BETTER WAY TO FIND FUNDING</span><h2>Spend less time searching. More time making sport happen.</h2><p>Compare opportunities, check the fine print and track the next step, all in one workspace.</p></div><div className="banner-art"><div className="art-circle circle-one"/><div className="art-circle circle-two"/><div className="art-card"><div className="art-card-top"><span>Funding fit</span><Sparkles size={14}/></div><div className="art-bar"><i/></div><div className="art-line short"/><div className="art-line"/></div><div className="art-check"><Check size={17}/></div></div></section>
 
         {activePage === 'Grant matching' && <section className="matching-layout">
           <div className="match-form-card">
-            <div className="match-card-heading"><div className="match-heading-icon"><WandSparkles size={19}/></div><div><h2>Tell us about your project</h2><p>We'll compare your answers with the demo grant listings.</p></div></div>
+            <div className="match-card-heading"><div className="match-heading-icon"><WandSparkles size={19}/></div><div><h2>Tell us about your project</h2><p>We'll compare your answers with the current seed list. Always verify eligibility with the funder.</p></div></div>
             <div className="match-form-grid">
               <label>Where is your organisation based?
                 <select value={matchProfile.region} onChange={e => setMatchProfile({...matchProfile, region:e.target.value})}>
@@ -234,7 +242,7 @@ export default function App() {
                 <input value={matchProfile.notes} onChange={e => setMatchProfile({...matchProfile,notes:e.target.value})} placeholder="e.g. low-cost after-school sport"/>
               </label>
             </div>
-            <div className="match-disclaimer"><ShieldCheck size={15}/><span>These are indicative matches based on listing text, not a confirmed eligibility decision. Check each funder's rules before applying.</span></div>
+            <div className="match-disclaimer"><ShieldCheck size={15}/><span>Scores are indicative keyword matches, not eligibility decisions. Some opportunities need local or project-specific checks. Confirm all details with the funder.</span></div>
           </div>
           <div className="match-results">
             <div className="match-results-heading"><div><div className="eyebrow"><Sparkles size={13}/> YOUR SHORTLIST</div><h2>Potential funding matches</h2><p>Ranked against your project profile.</p></div><span className="match-count">{matchResults.length} grants</span></div>
@@ -262,7 +270,7 @@ export default function App() {
             <div className="row-actions"><button className={`save-btn ${g.saved ? 'saved' : ''}`} title={g.saved ? 'Remove from saved' : 'Save grant'} onClick={() => toggleSaved(g.id)}><Bookmark size={17} fill={g.saved ? 'currentColor' : 'none'}/></button><button className="more-btn" title="View details" onClick={() => setSelected(g)}><ArrowUpRight size={17}/></button></div>
           </div>)}
         </div>
-        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Listings in this demo are a starting point, not a guarantee of current availability or funding.</span></div></div></>}
+        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Listings were checked against official source pages on 29 Oct 2026. Statuses and deadlines can change, so confirm details with the funder before applying.</span></div></div></>}
         <footer><span>© 2026 InFunds · Demo workspace</span><span>Built to help community sport thrive <HeartHandshake size={14}/></span></footer>
       </div>
     </main>

@@ -49,3 +49,8 @@ In the browser's developer console, run:
 localStorage.removeItem('infunds-grants-v1')
 location.reload()
 ```
+
+
+## Funding data notes
+
+The initial Waikato seed list was checked against official funder pages on 29 October 2026. The app is still a client-side pilot: it does not automatically refresh grant data or provide shared accounts/database storage. Each listing includes an official source link and eligibility notes; users must verify current details before applying. The matching score is indicative and is not an eligibility decision.
