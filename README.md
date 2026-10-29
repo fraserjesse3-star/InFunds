@@ -54,3 +54,10 @@ location.reload()
 ## Funding data notes
 
 The initial Waikato seed list was checked against official funder pages on 29 October 2026. The app is still a client-side pilot: it does not automatically refresh grant data or provide shared accounts/database storage. Each listing includes an official source link and eligibility notes; users must verify current details before applying. The matching score is indicative and is not an eligibility decision.
+
+
+## Supabase connection (pilot)
+
+This version reads public funding records from the Supabase `funding_opportunities` table and related `funders` table. Configure the Vite environment variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (use the project's publishable/anon key only; never use a service-role or secret key in frontend variables). Add both variables to the local `.env` file for local development and to Vercel Project Settings → Environment Variables for the deployed site, then redeploy.
+
+The current public funding tables have read-only policies for anonymous/authenticated users. Adding a grant through the UI remains browser-local until a secured admin workflow is built. Saved grants and application status are also still stored in the current browser, not synced across devices or users. Do not store confidential club data in this pilot.

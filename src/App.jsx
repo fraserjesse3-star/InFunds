@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
 import {
   Activity, ArrowDownRight, ArrowUpRight, Bell, Bookmark, CalendarDays,
   Check, ChevronDown, CircleDollarSign, Clock3, ExternalLink, Filter,
@@ -78,8 +79,42 @@ function loadGrants() {
 }
 function moneyLabel(value) { return value }
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
+
+function mapDatabaseGrant(row, existing = []) {
+  const savedRecord = existing.find(g => g.name === row.title || (g.source && g.source === row.source_url))
+  const statusLabels = { open: 'Open', upcoming: 'Upcoming', closed: 'Closed', rolling: 'Rolling', needs_review: 'Needs review' }
+  const verification = row.last_verified_at
+    ? new Date(`${row.last_verified_at}T12:00:00`).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
+    : 'Not yet verified'
+  return {
+    id: row.id,
+    name: row.title,
+    funder: row.funders?.name || 'Funder to confirm',
+    category: Array.isArray(row.categories) && row.categories.length ? row.categories[0] : 'Community projects',
+    amount: row.amount_text || 'Check with funder',
+    status: statusLabels[row.status] || 'Needs review',
+    deadline: row.deadline ? new Date(`${row.deadline}T12:00:00`).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' }) : (row.deadline_notes || 'Check with funder'),
+    region: Array.isArray(row.regions) ? row.regions.join(', ') : 'Check with funder',
+    fit: row.verification_status === 'verified' ? 'Source checked' : 'Needs review',
+    description: row.description || '',
+    eligibility: row.eligibility || 'Confirm eligibility directly with the funder.',
+    source: row.source_url || row.application_url || '',
+    verified: verification,
+    verificationStatus: row.verification_status || 'unverified',
+    saved: savedRecord?.saved ?? false,
+    applicationStatus: savedRecord?.applicationStatus || 'Not started'
+  }
+}
+
+
 export default function App() {
   const [grants, setGrants] = useState(loadGrants)
+  const [dataSource, setDataSource] = useState(supabase ? 'loading' : 'demo')
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('All grants')
   const [category, setCategory] = useState('All categories')
@@ -94,6 +129,37 @@ export default function App() {
     projectPurpose: 'Participation & inclusion', participants: 'Children and young people',
     budget: '5000', notes: ''
   })
+
+  useEffect(() => {
+    let cancelled = false
+    async function loadDatabaseGrants() {
+      if (!supabase) {
+        setDataSource('demo')
+        return
+      }
+      const { data, error } = await supabase
+        .from('funding_opportunities')
+        .select('*, funders(name)')
+        .order('deadline', { ascending: true, nullsFirst: false })
+      if (cancelled) return
+      if (error) {
+        console.error('Unable to load InFunds funding records:', error.message)
+        setDataSource('error')
+        return
+      }
+      if (data) {
+        let previous = []
+        try { previous = JSON.parse(localStorage.getItem('infunds-grants-v2') || '[]') } catch {}
+        const databaseGrants = data.map(row => mapDatabaseGrant(row, previous))
+        // Keep locally-added opportunities that are not in the shared database.
+        const localOnly = previous.filter(g => String(g.id).startsWith('custom-'))
+        setGrants([...databaseGrants, ...localOnly])
+        setDataSource('database')
+      }
+    }
+    loadDatabaseGrants()
+    return () => { cancelled = true }
+  }, [])
 
   const persist = (next) => {
     setGrants(next)
@@ -132,7 +198,7 @@ export default function App() {
     setForm({ name: '', funder: '', amount: '', deadline: '', region: 'Waikato', category: 'Community projects', source: '', description: '' })
     setActivePage('Overview')
     setFilter('All grants')
-    notify('Grant added to your tracker')
+    notify('Grant added to this browser only. Shared submission is not enabled yet.')
   }
 
   const matchResults = useMemo(() => {
@@ -189,7 +255,7 @@ export default function App() {
       <button className="nav-item" onClick={() => { setActivePage('Overview'); setFilter('Tracking'); setMobileMenu(false) }}><Activity size={18}/><span>Grant round tracker</span></button>
       <div className="sidebar-bottom">
         <div className="help-card"><div className="help-icon"><Sparkles size={17}/></div><strong>Funding, made clearer.</strong><p>Find opportunities, check fit and keep your next steps in one place.</p><button onClick={() => notify('Demo version: grant data is stored in this browser.')}>How InFunds works <ArrowUpRight size={14}/></button></div>
-        <div className="demo-note"><ShieldCheck size={15}/><span>Pilot workspace · Data saved in this browser</span></div>
+        <div className="demo-note"><ShieldCheck size={15}/><span>{dataSource === 'database' ? 'Funding records from shared database' : dataSource === 'error' ? 'Could not load database records' : 'Funding data preview'}</span></div>
       </div>
     </aside>
 
@@ -197,7 +263,7 @@ export default function App() {
       <header className="topbar">
         <button className="icon-btn mobile-menu-btn" onClick={() => setMobileMenu(true)}><Menu size={20}/></button>
         <div className="breadcrumb">Workspace <span>/</span> <strong>{activePage}</strong></div>
-        <div className="top-actions"><span className="demo-pill"><span/> Pilot mode</span><button className="icon-btn" title="Notifications" onClick={() => notify('You’re all caught up')}><Bell size={18}/></button><div className="user-avatar">SC</div></div>
+        <div className="top-actions"><span className="demo-pill"><span/> {dataSource === 'database' ? 'Live database' : dataSource === 'loading' ? 'Connecting…' : dataSource === 'error' ? 'Database issue' : 'Demo data'}</span><button className="icon-btn" title="Notifications" onClick={() => notify('You’re all caught up')}><Bell size={18}/></button><div className="user-avatar">SC</div></div>
       </header>
       <div className="content">
         <div className="welcome-row"><div><div className="eyebrow"><Sparkles size={14}/> YOUR FUNDING WORKSPACE</div><h1>{activePage === 'Overview' ? 'Find funding that fits.' : activePage}</h1><p className="subheading">{activePage === 'Overview' ? 'A clearer view of grants for your club, your community and your next big idea.' : activePage === 'Saved grants' ? 'Your shortlist of funding opportunities to come back to.' : activePage === 'Applications' ? 'Keep an eye on opportunities you are considering or preparing.' : 'Search opportunities, check eligibility and keep grant rounds on your radar.'}</p></div><button className="primary-btn" onClick={() => setShowAdd(true)}><Plus size={17}/> Add a grant</button></div>
@@ -270,7 +336,7 @@ export default function App() {
             <div className="row-actions"><button className={`save-btn ${g.saved ? 'saved' : ''}`} title={g.saved ? 'Remove from saved' : 'Save grant'} onClick={() => toggleSaved(g.id)}><Bookmark size={17} fill={g.saved ? 'currentColor' : 'none'}/></button><button className="more-btn" title="View details" onClick={() => setSelected(g)}><ArrowUpRight size={17}/></button></div>
           </div>)}
         </div>
-        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Listings were checked against official source pages on 29 Oct 2026. Statuses and deadlines can change, so confirm details with the funder before applying.</span></div></div></>}
+        <div className="data-note"><ShieldCheck size={16}/><div><strong>Always check the original source.</strong><span>Grant rounds and eligibility can change. Check each official source before applying. Verification dates and availability can change. Some listings may still need review.</span></div></div></>}
         <footer><span>© 2026 InFunds · Demo workspace</span><span>Built to help community sport thrive <HeartHandshake size={14}/></span></footer>
       </div>
     </main>
