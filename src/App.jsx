@@ -151,7 +151,7 @@ export default function App() {
       if (matchProfile.organisationType === 'Incorporated society or charity' && /not-for-profit|charit|organisation|community/.test(text)) score += 10
       if (matchProfile.organisationType === 'School' && /school|children|young people|tamariki|rangatahi/.test(text)) score += 10
       if (matchProfile.organisationType === 'Informal community group' && /community|participation|inclusion/.test(text)) score += 5
-      if (budgetNumber > 0 && /up to \\$?5,000|\\$5,000/.test(g.amount) && budgetNumber <= 5000) score += 5
+      if (budgetNumber > 0 && /up to \$?5,000|\$5,000/.test(g.amount) && budgetNumber <= 5000) score += 5
       if (g.status === 'Open') score += 10
       if (g.status === 'Closed') score -= 25
       if (/check with funder|unconfirmed|tbc/i.test(`${g.status} ${g.deadline} ${g.amount}`)) score -= 5
